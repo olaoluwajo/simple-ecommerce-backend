@@ -12,7 +12,7 @@ const cookieParser = require("cookie-parser");
 const { dbConnect } = require("./utils/db");
 
 app.use(cors({
-  origin: ['http://localhost:3000'],
+  origin: ['*'],
   credentials: true
 }))
 
