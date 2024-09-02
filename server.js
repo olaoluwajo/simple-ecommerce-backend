@@ -11,10 +11,15 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const { dbConnect } = require("./utils/db");
 
-app.use(cors({
-  origin: '*',
-  credentials: true
-}))
+dbConnect()
+app.options(
+  "*",
+  cors({
+    origin: "*", 
+    credentials: true,
+  })
+);
+
 
 app.use(bodyParser.json())
 app.use(cookieParser())
@@ -28,6 +33,5 @@ app.get("/", (req, res) => res.send("My backend"));
 
 const port = process.env.PORT 
 
-dbConnect()
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
