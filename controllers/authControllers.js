@@ -122,8 +122,9 @@ class authControllers {
   // End Method
 
   getUser = async (req, res) => {
-    const { id, role } = req;
-
+    console.log("user", req.user);
+    const { id, role } = req.user;
+    console.log("id role", id, role);
     try {
       if (role === "admin") {
         const user = await adminModel.findById(id);
