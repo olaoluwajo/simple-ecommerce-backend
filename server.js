@@ -12,10 +12,17 @@ const cookieParser = require("cookie-parser");
 const { dbConnect } = require("./utils/db");
 
 dbConnect()
-app.options(
-  "*",
+// app.options(
+//   "*",
+//   cors({
+//     origin: "*", 
+//     credentials: true,
+//   })
+// );
+
+app.use(
   cors({
-    origin: "*", 
+    origin: ["http://localhost:3000", "https://dashboard-weld-mu.vercel.app", "http://localhost:3001"],
     credentials: true,
   })
 );
