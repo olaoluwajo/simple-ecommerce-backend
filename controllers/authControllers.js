@@ -29,8 +29,9 @@ class authControllers {
 
           res.cookie("accessToken", token, {
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-            // httpOnly: true,
-            // secure: true,
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
           });
           responseReturn(res, 200, { token, message: "Login Succesfull" });
         } else {
@@ -111,6 +112,9 @@ class authControllers {
         });
         res.cookie("accessToken", token, {
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          httpOnly: true,
+          secure: true,
+          sameSite: "None",
         });
         responseReturn(res, 201, { token, message: "Register Successfull" });
       }
@@ -123,9 +127,9 @@ class authControllers {
   // End Method
 
   getUser = async (req, res) => {
-    console.log("user", req.user);
+    // console.log("user", req.user);
     const { id, role } = req.user;
-    console.log("id role", id, role);
+    // console.log("id role", id, role);
     try {
       if (role === "admin") {
         const user = await adminModel.findById(id);

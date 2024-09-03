@@ -13,7 +13,7 @@ module.exports.authMiddleware = async (req, res, next) => {
       token && token.startsWith("Bearer ") ? token.slice(7).trim() : null;
   }
 
-  console.log("accesstoken", accessToken);
+  // console.log("accesstoken", accessToken);
   // Check if the access token is present
   if (!accessToken) {
     return res.status(409).json({ error: "Please Login First" });
@@ -21,7 +21,7 @@ module.exports.authMiddleware = async (req, res, next) => {
     try {
       
       const deCodeToken = await jwt.verify(accessToken, process.env.SECRET);
-      console.log("role from jwt", deCodeToken);
+      // console.log("role from jwt", deCodeToken);
       let user;
       if (deCodeToken.role === "seller") {
         user = await sellerModel.findById(deCodeToken.id);
@@ -33,7 +33,7 @@ module.exports.authMiddleware = async (req, res, next) => {
       user.role = deCodeToken.role;
       user.id = deCodeToken.id;
       req.user = user;
-      console.log("user", req.user);
+      // console.log("user", req.user);
       next();
     } catch (error) {
       return res.status(409).json({ error: "Please Login" });

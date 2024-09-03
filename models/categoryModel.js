@@ -19,7 +19,7 @@ const categorySchema = new Schema(
 );
 
 categorySchema.index({
-  name: "test",
+  name: "text",
 });
 
 module.exports = model("categorys", categorySchema);
