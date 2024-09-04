@@ -135,7 +135,7 @@ class authControllers {
         const user = await adminModel.findById(id);
         responseReturn(res, 200, { userInfo: user });
       } else {
-        console.log("Seller Info");
+        // console.log("Seller Info");
         const seller = await sellerModel.findById(id);
         responseReturn(res, 200, { userInfo: seller });
       }

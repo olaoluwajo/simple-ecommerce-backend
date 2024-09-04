@@ -5,11 +5,11 @@ const adminModel = require("../models/adminModel");
 module.exports.authMiddleware = async (req, res, next) => {
   let accessToken;
   //const { accessToken } = req.cookies;
-  if(req.cookies.accessToken){
-    accessToken = req.cookies.accessToken
-  }else{
+  if (req.cookies.accessToken) {
+    accessToken = req.cookies.accessToken;
+  } else {
     const token = req.headers.authorization;
-     accessToken =
+    accessToken =
       token && token.startsWith("Bearer ") ? token.slice(7).trim() : null;
   }
 
@@ -19,14 +19,12 @@ module.exports.authMiddleware = async (req, res, next) => {
     return res.status(409).json({ error: "Please Login First" });
   } else {
     try {
-      
       const deCodeToken = await jwt.verify(accessToken, process.env.SECRET);
       // console.log("role from jwt", deCodeToken);
       let user;
       if (deCodeToken.role === "seller") {
         user = await sellerModel.findById(deCodeToken.id);
       } else {
-        
         user = await adminModel.findById(deCodeToken.id);
       }
 
