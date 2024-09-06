@@ -6,7 +6,7 @@ const cloudinary = require("cloudinary").v2;
 class productController {
   add_product = async (req, res) => {
     const { id } = req.user;
-    // console.log(id)
+    // console.log("post", id);
     // console.log("product working");
     const form = formidable({ multiples: true });
     form.parse(req, async (err, field, files) => {
@@ -73,5 +73,68 @@ class productController {
   };
 
   // End Method
+
+  products_get = async (req, res) => {
+    // console.log(req.query)
+    const { page, searchValue, perPage } = req.query;
+    // console.log('getuserId', id);
+    const { id } = req.user;
+    const skipPage = parseInt(perPage) * (parseInt(page) - 1);
+
+    try {
+      if (searchValue) {
+        const products = await productModel
+          .find({
+            $text: { $search: searchValue },
+            sellerId: id,
+          })
+          .skip(skipPage)
+          .limit(perPage)
+          .sort({ createdAt: -1 });
+        const totalProduct = await productModel
+          .find({
+            $text: { $search: searchValue },
+            sellerId: id,
+          })
+          .countDocuments();
+        responseReturn(res, 200, {
+          products,
+          totalProduct,
+          // message: "Categories fetched successfully",
+        });
+      } else {
+        const products = await productModel
+          .find({ sellerId: id })
+          .skip(skipPage)
+          .limit(perPage)
+          .sort({ createdAt: -1 });
+        const totalProduct = await productModel
+          .find({ sellerId: id })
+          .countDocuments();
+        responseReturn(res, 200, {
+          products,
+          totalProduct,
+        });
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // End Method
+
+  product_get = async (req, res) => {
+    const { productId } = req.params;
+    try {
+      const product = await productModel.findById(productId);
+      responseReturn(res, 200, {
+        product,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+// END METHOD
+
 }
 module.exports = new productController();
