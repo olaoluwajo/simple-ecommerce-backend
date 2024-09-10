@@ -3,6 +3,8 @@ const sellerModel = require("../models/sellerModel");
 const sellerCustomerModel = require("../models/chat/sellerCustomerModel");
 const { responseReturn } = require("../utils/response");
 const { createToken } = require("../utils/tokenCreate");
+const cloudinary = require("cloudinary").v2;
+const formidable = require("formidable");
 
 const bcrypt = require("bcrypt");
 
@@ -143,6 +145,79 @@ class authControllers {
       responseReturn(res, 500, { error: "Internal server error" });
     }
   };
+
+  // End Method
+
+  profile_image_upload = async (req, res) => {
+    // console.log("user", req.user);
+    // console.log("id", req.id);
+    // console.log("body", req.body);
+    const { id } = req.user;
+    // console.log(id);
+    const form = formidable({ multiples: true });
+    form.parse(req, async (err, _, files) => {
+      cloudinary.config({
+        cloud_name: process.env.cloud_name,
+        api_key: process.env.api_key,
+        api_secret: process.env.api_secret,
+        secure: true,
+      });
+      const { image } = files;
+
+      try {
+        const result = await cloudinary.uploader.upload(image.filepath, {
+          folder: "profile",
+        });
+        if (result) {
+          await sellerModel.findByIdAndUpdate(id, {
+            image: result.url,
+          });
+          const userInfo = await sellerModel.findById(id);
+          responseReturn(res, 201, {
+            message: "Profile Image Upload Successfully",
+            userInfo,
+          });
+        } else {
+          responseReturn(res, 404, { error: "Image Upload Failed" });
+        }
+      } catch (error) {
+        responseReturn(res, 500, { error: error.message });
+      }
+    });
+  };
+
+  // End Method
+
+  profile_info_add = async (req, res) => {
+    // console.log(req.body);
+    const { division, district, shopName, sub_district } = req.body;
+
+    const { id } = req.user;
+    // console.log(id);
+
+    try {
+      await sellerModel.findByIdAndUpdate(id, {
+        shopInfo: {
+          shopName,
+          division,
+          district,
+          sub_district,
+        },
+      });
+
+      const userInfo = await sellerModel.findById(id);
+      responseReturn(res, 201, {
+        userInfo,
+        message: "Profile info added successfully",
+      });
+    } catch (error) {
+      responseReturn(res, 500, {
+        error: error.message,
+      });
+    }
+  };
+
+  // END METHOD
 }
 
 module.exports = new authControllers();

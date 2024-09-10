@@ -163,11 +163,8 @@ class productController {
     }
   };
 
-
-
-
   product_img_update = async (req, res) => {
-    const form = formidable({multiples: true})
+    const form = formidable({ multiples: true });
 
     form.parse(req, async (err, field, files) => {
       // console.log(field)
@@ -190,23 +187,28 @@ class productController {
           const result = await cloudinary.uploader.upload(newImage.filepath, {
             folder: "products",
           });
-            if (result) {
-              let { images } = await productModel.findById(productId);
-              const index = images.findIndex((img) => img === oldImage);
-              images[index] = result.url;
-              await productModel.findByIdAndUpdate(productId, { images });
+          if (result) {
+            let { images } = await productModel.findById(productId);
+            const index = images.findIndex((img) => img === oldImage);
+            images[index] = result.url;
+            await productModel.findByIdAndUpdate(productId, { images });
 
-              const product = await productModel.findById(productId);
-              responseReturn(res, 200, {
-                product,
-                message: "Product Image Updated Successfully",
-              });
-            } else {
-              responseReturn(res, 404, { error: "Image Upload Failed" });
-            }
-        } catch (error) {}
+            const product = await productModel.findById(productId);
+            responseReturn(res, 200, {
+              product,
+              message: "Product Image Updated Successfully",
+            });
+          } else {
+            responseReturn(res, 404, { error: "Image Upload Failed" });
+          }
+        } catch (error) {
+          responseReturn(res, 404, { error: error.message });
+        }
       }
     });
-  }
+  };
+  // END METHOD
+
+
 }
 module.exports = new productController();
