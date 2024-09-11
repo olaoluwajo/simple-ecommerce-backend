@@ -22,7 +22,12 @@ dbConnect()
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://dashboard-weld-mu.vercel.app", "http://localhost:3001"],
+    origin: [
+      "http://localhost:3000",
+      "https://dashboard-weld-mu.vercel.app",
+      "http://localhost:3001",
+      "*",
+    ],
     credentials: true,
   })
 );
@@ -35,6 +40,7 @@ app.use(cookieParser());
 app.use("/api", require("./routes/authRoutes"));
 app.use("/api", require("./routes/dashboard/categoryRoutes"));
 app.use("/api", require("./routes/dashboard/productRoutes"));
+app.use("/api", require("./routes/dashboard/sellerRoutes"));
 
 app.get("/", (req, res) => res.send("My backend"));
 
