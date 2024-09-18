@@ -26,6 +26,7 @@ app.use(
       "http://localhost:3000",
       "https://dashboard-weld-mu.vercel.app",
       "http://localhost:3001",
+      "http://localhost:5173",
       "*",
     ],
     credentials: true,
@@ -33,10 +34,13 @@ app.use(
 );
 
 
+
+
 app.use(bodyParser.json())
 app.use(cookieParser());
 
 
+app.use("/api/home", require("./routes/home/homeRoute"));
 app.use("/api", require("./routes/authRoutes"));
 app.use("/api", require("./routes/dashboard/categoryRoutes"));
 app.use("/api", require("./routes/dashboard/productRoutes"));

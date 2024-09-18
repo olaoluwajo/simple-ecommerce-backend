@@ -40,7 +40,7 @@ class sellerController {
       if (searchValue) {
       } else {
         const allSellers = await sellerModel
-          .find()
+          .find({})
           .skip(skipPage)
           .limit(parPage)
           .sort({ createdAt: -1 });
