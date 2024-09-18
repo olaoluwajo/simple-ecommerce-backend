@@ -112,7 +112,7 @@ class homeControllers {
        });
      } catch (error) {
        console.log(error.message);
-     }
+     }  
   };
 }
 
