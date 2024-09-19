@@ -25,7 +25,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://dashboard-weld-mu.vercel.app",
-      "https://simplemart-mu.vercel.app/",
+      "https://simplemart-mu.vercel.app",
       "http://localhost:3001",
       "http://localhost:5173",
       "*",

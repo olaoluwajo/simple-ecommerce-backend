@@ -44,8 +44,8 @@ class sellerController {
           .skip(skipPage)
           .limit(parPage)
           .sort({ createdAt: -1 });
-        
-        responseReturn(res, 200, {allSellers });
+
+        responseReturn(res, 200, { allSellers });
       }
     } catch (error) {
       responseReturn(res, 500, { error: error.message });
