@@ -125,7 +125,7 @@ class homeControllers {
     // Create a new query object that includes parPage
     const modifiedQuery = { ...req.query, perPage };
 
-    console.log("Modified Query Parameters: ", modifiedQuery);
+    // console.log("Modified Query Parameters: ", modifiedQuery);
 
     try {
       // Fetch products and sort them by createdAt
@@ -133,7 +133,7 @@ class homeControllers {
         createdAt: -1,
       });
 
-      console.log("Total Products Found: ", products.length);
+      // console.log("Total Products Found: ", products.length);
 
       // Create an instance of queryProducts with the modified query
       const queryInstance = new queryProducts(products, modifiedQuery);
@@ -142,6 +142,7 @@ class homeControllers {
       const totalProduct = queryInstance
         .categoryQuery()
         .ratingQuery()
+        .searchQuery()
         .priceQuery()
         .sortByPrice()
         .countProducts();
@@ -151,6 +152,7 @@ class homeControllers {
         .categoryQuery()
         .ratingQuery()
         .priceQuery()
+        .searchQuery()
         .sortByPrice()
         .skip()
         .limit()
