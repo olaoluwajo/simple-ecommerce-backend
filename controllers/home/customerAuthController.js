@@ -46,7 +46,7 @@ class customerAuthController {
   // End Method
 
   customer_login = async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const { email, password } = req.body;
     try {
       const customer = await customerModel
@@ -58,7 +58,7 @@ class customerAuthController {
         // const match = await bcrypt.compare(password, customer.password);
         // Compare the password
         const match = await compare(password, customer.password);
-        console.log("Password match:", match);
+        // console.log("Password match:", match);
 
         if (match) {
           const token = await createToken({
