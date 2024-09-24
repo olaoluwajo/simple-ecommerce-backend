@@ -145,18 +145,61 @@ class cartController {
         }
       }
       // console.log("calculatePrice", p);
-        responseReturn(res, 200, {
-          cart_products: p,
-          price: calculatePrice,
-          cart_product_count,
-          shipping_fee: 200 * p.length,
-          outOfStockProduct,
-          buy_product_item,
-        });
+      responseReturn(res, 200, {
+        cart_products: p,
+        price: calculatePrice,
+        cart_product_count,
+        shipping_fee: 200 * p.length,
+        outOfStockProduct,
+        buy_product_item,
+      });
     } catch (error) {
       console.log(error.message);
     }
   };
+  // End Method----------------------------------
+
+  delete_cart_product = async (req, res) => {
+    const { cart_id } = req.params;
+    console.log(cart_id);
+    try {
+      await cartModel.findByIdAndDelete(cart_id);
+      responseReturn(res, 200, { message: "Product Removed Successfully" });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  // End Method----------------------------------
+
+  quantity_inc = async (req, res) => {
+    const { cart_id } = req.params;
+    console.log(cart_id);
+    try {
+      const product = await cartModel.findById(cart_id);
+      const { quantity } = product;
+      await cartModel.findByIdAndUpdate(cart_id, { quantity: quantity + 1 });
+      responseReturn(res, 200, { message: "Qty Updated" });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  
+  // End Method----------------------------------
+  quantity_dec = async (req, res) => {
+    const { cart_id } = req.params;
+    console.log(cart_id);
+    try {
+      const product = await cartModel.findById(cart_id);
+      const { quantity } = product;
+      await cartModel.findByIdAndUpdate(cart_id, { quantity: quantity - 1 });
+      responseReturn(res, 200, { message: "Qty Updated" });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+
   // End Method----------------------------------
 }
 module.exports = new cartController();
