@@ -161,7 +161,7 @@ class cartController {
 
   delete_cart_product = async (req, res) => {
     const { cart_id } = req.params;
-    console.log(cart_id);
+    // console.log(cart_id);
     try {
       await cartModel.findByIdAndDelete(cart_id);
       responseReturn(res, 200, { message: "Product Removed Successfully" });
@@ -173,7 +173,7 @@ class cartController {
 
   quantity_inc = async (req, res) => {
     const { cart_id } = req.params;
-    console.log(cart_id);
+    // console.log(cart_id);
     try {
       const product = await cartModel.findById(cart_id);
       const { quantity } = product;
@@ -184,11 +184,10 @@ class cartController {
     }
   };
 
-  
   // End Method----------------------------------
   quantity_dec = async (req, res) => {
     const { cart_id } = req.params;
-    console.log(cart_id);
+    // console.log(cart_id);
     try {
       const product = await cartModel.findById(cart_id);
       const { quantity } = product;
@@ -198,7 +197,6 @@ class cartController {
       console.log(error.message);
     }
   };
-
 
   // End Method----------------------------------
 }

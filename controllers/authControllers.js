@@ -11,6 +11,7 @@ const bcrypt = require("bcrypt");
 class authControllers {
   admin_login = async (req, res) => {
     const { email, password } = req.body;
+
     try {
       const admin = await adminModel
         .findOne({
@@ -19,7 +20,8 @@ class authControllers {
         .select("+password");
 
       if (admin) {
-        const isMatch = await bcrypt.compare(password, admin.password);
+        // const isMatch = await bcrypt.compare(password, admin.password);
+        const isMatch = password === admin.password;
         // console.log(isMatch);
 
         if (isMatch) {
