@@ -1,4 +1,5 @@
 const cartModel = require("../../models/cartModel");
+const wishlistModel = require("../../models/wishlistModel");
 const categoryModel = require("../../models/categoryModel");
 const { responseReturn } = require("../../utils/response");
 const {
@@ -105,6 +106,7 @@ class cartController {
       let unique = [
         ...new Set(stockProduct.map((p) => p.products[0].sellerId.toString())),
       ];
+      // console.log(unique);
       for (let i = 0; i < unique.length; i++) {
         let price = 0;
         for (let j = 0; j < stockProduct.length; j++) {
@@ -145,6 +147,7 @@ class cartController {
         }
       }
       // console.log("calculatePrice", p);
+      console.log(p);
       responseReturn(res, 200, {
         cart_products: p,
         price: calculatePrice,
@@ -199,5 +202,57 @@ class cartController {
   };
 
   // End Method----------------------------------
+
+  add_wishlist = async (req, res) => {
+    const { slug } = req.body;
+    // console.log(slug);
+    try {
+      const product = await wishlistModel.findOne({ slug });
+      if (product) {
+        responseReturn(res, 404, {
+          error: "Product Is Already In Wishlist",
+        });
+      } else {
+        await wishlistModel.create(req.body);
+        responseReturn(res, 201, {
+          message: "Product Add to Wishlist Success",
+        });
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // End Method----------------------------------
+
+  get_wishlist = async (req, res) => {
+    const { userId } = req.params;
+    try {
+      const wishlists = await wishlistModel.find({
+        userId,
+      });
+      responseReturn(res, 200, {
+        wishlistCount: wishlists.length,
+        wishlists,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  // End Method------------------------------------------
+
+  remove_wishlist = async (req, res) => {
+    const { wishlistId } = req.params;
+    try {
+      const wishlist = await wishlistModel.findByIdAndDelete(wishlistId);
+      responseReturn(res, 200, {
+        message: "Wishlist Product Removed",
+        wishlistId,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  // End Method------------------------------------------
 }
 module.exports = new cartController();
