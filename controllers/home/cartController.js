@@ -147,7 +147,7 @@ class cartController {
         }
       }
       // console.log("calculatePrice", p);
-      console.log(p);
+      // console.log(p);
       responseReturn(res, 200, {
         cart_products: p,
         price: calculatePrice,
