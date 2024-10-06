@@ -1,7 +1,9 @@
 const categoryModel = require("../../models/categoryModel");
 const productModel = require("../../models/productModel");
+const reviewModel = require("../../models/reviewModel");
 const { responseReturn } = require("../../utils/response");
 const queryProducts = require("../../utils/queryProducts");
+const moment = require("moment");
 
 class homeControllers {
   // This makes it easier to display products in rows, for example, in a grid with three products in each row on a webpage!
@@ -217,6 +219,40 @@ class homeControllers {
       });
     } catch (error) {
       console.log(error.message);
+    }
+  };
+  // end method
+
+  submit_review = async (req, res) => {
+    //  console.log(req.body);
+    const { productId, rating, review, name } = req.body;
+    try {
+      await reviewModel.create({
+        productId,
+        name,
+        rating,
+        review,
+        date: moment(Date.now()).format("LL"),
+      });
+      let rat = 0;
+      const reviews = await reviewModel.find({
+        productId,
+      });
+      for (let i = 0; i < reviews.length; i++) {
+        rat = rat + reviews[i].rating;
+      }
+      let productRating = 0;
+      if (reviews.length !== 0) {
+        productRating = (rat / reviews.length).toFixed(1);
+      }
+      await productModel.findByIdAndUpdate(productId, {
+        rating: productRating,
+      });
+      responseReturn(res, 201, {
+        message: "Review Added Successfully",
+      });
+    } catch (error) {
+      console.log("REVIEW ERROR", error.message);
     }
   };
   // end method
