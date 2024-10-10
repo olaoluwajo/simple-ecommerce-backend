@@ -17,8 +17,8 @@ class customerAuthController {
         const createCustomer = await customerModel.create({
           name: name.trim(),
           email: email.trim(),
-          // password: await bcrypt.hash(password, 10),
-          password: password.trim(),
+          password: await bcrypt.hash(password, 10),
+          // password: password.trim(),
           method: "manualy",
         });
         await sellerCustomerModel.create({
@@ -55,9 +55,9 @@ class customerAuthController {
       if (customer) {
         // console.log("Stored hash in DB:", customer.password);
         // console.log("Password from user:", password);
-        // const match = await bcrypt.compare(password, customer.password);
+        const match = await bcrypt.compare(password, customer.password);
         // Compare the password
-        const match = await compare(password, customer.password);
+        // const match = await compare(password, customer.password);
         // console.log("Password match:", match);
 
         if (match) {
