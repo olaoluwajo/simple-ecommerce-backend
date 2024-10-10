@@ -1,24 +1,19 @@
 const express = require("express");
 
-
-const app = express()
-
-
-require('dotenv').config()
+const app = express();
 
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const { dbConnect } = require("./utils/db");
 
-dbConnect()
-// app.options(
-//   "*",
-//   cors({
-//     origin: "*", 
-//     credentials: true,
-//   })
-// );
+require("dotenv").config();
+
+dbConnect();
+
+const socket = require("socket.io");
+const http = require("http");
+const server = http.createServer(app);
 
 app.use(
   cors({
@@ -34,13 +29,57 @@ app.use(
   })
 );
 
+const io = socket(server, {
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "https://dashboard-weld-mu.vercel.app",
+      "https://simplemart-mu.vercel.app",
+      "http://localhost:3001",
+      "http://localhost:5173",
+      "*",
+    ],
+    credentials: true,
+  },
+});
 
+var allCustomer = [];
+const addUser = (customerId, socketId, userInfo) => {
+  const checkUser = allCustomer.some((u) => u.customerId === customerId);
+  // console.log(checkUser);
+  if (!checkUser) {
+    allCustomer.push({
+      customerId,
+      socketId,
+      userInfo,
+    });
+  }
+};
 
+io.on("connection", (soc) => {
+  console.log("socket server is running...");
 
-app.use(bodyParser.json())
+  soc.on("add_user", (customerId, userInfo) => {
+    // console.log(userInfo);
+    addUser(customerId, soc.id, userInfo);
+  });
+});
+
+// io.on("connection", (socket) => {
+//   console.log("Socket server is running...");
+
+//   socket.on("disconnect", () => {
+//     console.log("A user disconnected");
+//   });
+// });
+
+// require("dotenv").config();
+
+// Middleware
+app.use(bodyParser.json());
 app.use(cookieParser());
 
-
+// ROUTES
 app.use("/api/home", require("./routes/home/homeRoute"));
 app.use("/api", require("./routes/authRoutes"));
 app.use("/api", require("./routes/dashboard/categoryRoutes"));
@@ -49,14 +88,11 @@ app.use("/api", require("./routes/dashboard/sellerRoutes"));
 app.use("/api", require("./routes/home/customerAuthRoutes"));
 app.use("/api", require("./routes/home/cartRoutes"));
 app.use("/api", require("./routes/order/orderRoutes"));
+app.use("/api", require("./routes/chatRoutes"));
 
+// Test route
+app.get("/", (req, res) => res.send("Hello Server"));
 
-
-
-app.get("/", (req, res) => res.send("My backend"));
-
-
-const port = process.env.PORT 
-
-
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+// Server listening
+const port = process.env.PORT;
+server.listen(port, () => console.log(`Server is running on port ${port}`));
