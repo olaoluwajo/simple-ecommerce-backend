@@ -204,6 +204,27 @@ class chatController {
     }
   };
   // End Method
+
+  get_customers = async (req, res) => {
+    // console.log(req.params)
+    const { sellerId } = req.params;
+    try {
+      const data = await sellerCustomerModel.findOne({ myId: sellerId });
+      responseReturn(res, 200, {
+        customers: data.myFriends,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // End Method
+
+  get_customers_seller_message = async (req, res) => {
+    console.log(req.params);
+    const { id } = req;
+    console.log(id);
+  };
+  // End Method
 }
 
 module.exports = new chatController();
