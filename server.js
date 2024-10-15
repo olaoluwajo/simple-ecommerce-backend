@@ -113,15 +113,7 @@ io.on("connection", (soc) => {
   });
 });
 
-// io.on("connection", (socket) => {
-//   console.log("Socket server is running...");
 
-//   socket.on("disconnect", () => {
-//     console.log("A user disconnected");
-//   });
-// });
-
-// require("dotenv").config();
 
 // Middleware
 app.use(bodyParser.json());
