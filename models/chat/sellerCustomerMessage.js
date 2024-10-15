@@ -9,7 +9,7 @@ const sellerCustomerMsgSchema = new Schema(
       type: String,
       required: true,
     },
-    receverId: {
+    receiverId: {
       type: String,
       required: true,
     },

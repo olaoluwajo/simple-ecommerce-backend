@@ -85,13 +85,13 @@ class chatController {
           $or: [
             {
               $and: [
-                { receverId: { $eq: sellerId } }, // Messages where the seller is the receiver
+                { receiverId: { $eq: sellerId } }, // Messages where the seller is the receiver
                 { senderId: { $eq: userId } }, // and the customer is the sender
               ],
             },
             {
               $and: [
-                { receverId: { $eq: userId } }, // Messages where the customer is the receiver
+                { receiverId: { $eq: userId } }, // Messages where the customer is the receiver
                 { senderId: { $eq: sellerId } }, // and the seller is the sender
               ],
             },
@@ -141,7 +141,7 @@ class chatController {
       const message = await sellerCustomerMessage.create({
         senderId: userId,
         senderName: name,
-        receverId: sellerId,
+        receiverId: sellerId,
         message: text,
       });
 
@@ -220,9 +220,106 @@ class chatController {
   // End Method
 
   get_customers_seller_message = async (req, res) => {
-    console.log(req.params);
-    const { id } = req;
-    console.log(id);
+    // console.log(req.params);
+    // console.log(req);
+    const sellerId = req.user;
+
+    // console.log("Seller ID:", sellerId);
+
+    const { customerId } = req.params;
+    const { id } = sellerId;
+    try {
+      const messages = await sellerCustomerMessage.find({
+        $or: [
+          {
+            $and: [
+              {
+                receiverId: { $eq: customerId },
+              },
+              {
+                senderId: {
+                  $eq: id,
+                },
+              },
+            ],
+          },
+          {
+            $and: [
+              {
+                receiverId: { $eq: id },
+              },
+              {
+                senderId: {
+                  $eq: customerId,
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      const currentCustomer = await customerModel.findById(customerId);
+      responseReturn(res, 200, {
+        messages,
+        currentCustomer,
+      });
+      // console.log("MESSAGES:", messages);
+      // console.log("CustomerId:", currentCustomer);
+      // console.log("SellerId:", id);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // End Method
+
+  seller_message_add = async (req, res) => {
+    // console.log(req.body);
+    const { senderId, receiverId, text, name } = req.body;
+    try {
+      const message = await sellerCustomerMessage.create({
+        senderId: senderId,
+        senderName: name,
+        receiverId: receiverId,
+        message: text,
+      });
+      const data = await sellerCustomerModel.findOne({ myId: senderId });
+      let myFriends = data.myFriends;
+      let index = myFriends.findIndex((f) => f.fdId === receiverId);
+      while (index > 0) {
+        let temp = myFriends[index];
+        myFriends[index] = myFriends[index - 1];
+        myFriends[index - 1] = temp;
+        index--;
+      }
+      await sellerCustomerModel.updateOne(
+        {
+          myId: senderId,
+        },
+        {
+          myFriends,
+        }
+      );
+      const data1 = await sellerCustomerModel.findOne({ myId: receiverId });
+      let myFriends1 = data1.myFriends;
+      let index1 = myFriends1.findIndex((f) => f.fdId === senderId);
+      while (index1 > 0) {
+        let temp1 = myFriends1[index1];
+        myFriends1[index1] = myFriends[index1 - 1];
+        myFriends1[index1 - 1] = temp1;
+        index1--;
+      }
+      await sellerCustomerModel.updateOne(
+        {
+          myId: receiverId,
+        },
+        {
+          myFriends1,
+        }
+      );
+      responseReturn(res, 201, { message });
+    } catch (error) {
+      console.log(error);
+    }
   };
   // End Method
 }
